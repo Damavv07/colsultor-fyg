@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Search, MapPin, Bell, ShoppingCart, Star } from 'lucide-react';
 
 interface MedicationResult {
   id: string;
@@ -16,6 +17,8 @@ interface MedicationResult {
   availability: number;
   expirationDate: string;
   hasDiscount: boolean;
+  rating: number;
+  image: string;
 }
 
 interface SearchInterfaceProps {
@@ -32,39 +35,52 @@ const SearchInterface = ({ onShowMap, onShowNotifications }: SearchInterfaceProp
   const mockResults: MedicationResult[] = [
     {
       id: '1',
-      name: 'Paracetamol 500mg',
-      genericName: 'Acetaminofén',
-      price: 45.50,
-      originalPrice: 52.00,
+      name: 'Liver Cleanse Detox & Repair',
+      genericName: 'SAN Pharma',
+      price: 18.99,
+      originalPrice: 22.00,
       pharmacy: 'Farmacia San Pablo',
       distance: '0.3 km',
-      availability: 15,
+      availability: 120,
       expirationDate: '2025-08-15',
-      hasDiscount: true
+      hasDiscount: true,
+      rating: 4.8,
+      image: '/lovable-uploads/9378204d-3189-486c-b22a-f6e6321bee46.png'
     },
     {
       id: '2',
-      name: 'Ibuprofeno 600mg',
-      genericName: 'Ibuprofeno',
-      price: 38.90,
+      name: 'Non-Drowsy Cold & Flu Relief',
+      genericName: 'Daytime',
+      price: 21.99,
       pharmacy: 'Farmacia del Ahorro',
       distance: '0.7 km',
-      availability: 8,
+      availability: 52,
       expirationDate: '2025-06-20',
-      hasDiscount: false
+      hasDiscount: false,
+      rating: 4.6,
+      image: '/lovable-uploads/9378204d-3189-486c-b22a-f6e6321bee46.png'
     },
     {
       id: '3',
-      name: 'Omeprazol 20mg',
-      genericName: 'Omeprazol',
-      price: 89.00,
-      originalPrice: 95.00,
+      name: "Men's Energy Multivitamins",
+      genericName: '21st Century Store',
+      price: 24.99,
+      originalPrice: 29.99,
       pharmacy: 'Farmacias Similares',
       distance: '1.2 km',
-      availability: 23,
+      availability: 68,
       expirationDate: '2025-12-10',
-      hasDiscount: true
+      hasDiscount: true,
+      rating: 4.4,
+      image: '/lovable-uploads/9378204d-3189-486c-b22a-f6e6321bee46.png'
     }
+  ];
+
+  const categories = [
+    { name: 'Medicines', icon: '💊', color: 'bg-blue-100' },
+    { name: 'Supplements', icon: '🧬', color: 'bg-green-100' },
+    { name: 'Health Devices', icon: '🩺', color: 'bg-purple-100' },
+    { name: 'Personal Care', icon: '🧴', color: 'bg-pink-100' }
   ];
 
   const handleSearch = async () => {
@@ -79,9 +95,9 @@ const SearchInterface = ({ onShowMap, onShowNotifications }: SearchInterfaceProp
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header with search */}
-      <div className="bg-gradient-to-r from-fyg-teal to-fyg-blue p-6 text-white">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white px-4 py-3 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
             <img 
@@ -89,149 +105,204 @@ const SearchInterface = ({ onShowMap, onShowNotifications }: SearchInterfaceProp
               alt="FYG" 
               className="w-8 h-8"
             />
-            <h1 className="text-xl font-semibold">Consultor FYG</h1>
+            <span className="text-lg font-semibold text-gray-800">9:41</span>
           </div>
           
-          {/* Avatar assistant */}
-          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center animate-pulse-slow">
-            <div className="w-6 h-6 bg-white/40 rounded-full"></div>
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="sm" onClick={onShowNotifications}>
+              <Bell className="w-5 h-5" />
+            </Button>
+            <Button variant="ghost" size="sm">
+              <ShoppingCart className="w-5 h-5" />
+            </Button>
           </div>
         </div>
 
-        <div className="space-y-3">
-          <div className="flex space-x-2">
-            <Input
-              type="text"
-              placeholder="Buscar medicamento..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/70"
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-            />
-            <Button 
-              onClick={handleSearch}
-              disabled={isSearching}
-              className="bg-white/20 hover:bg-white/30 text-white"
-            >
-              {isSearching ? '...' : '🔍'}
-            </Button>
+        {/* Search Bar */}
+        <div className="relative mb-4">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Input
+            type="text"
+            placeholder="Search medicine..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 pr-12 py-3 bg-gray-100 border-0 rounded-xl"
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+          />
+          <Button 
+            onClick={onShowMap}
+            variant="ghost" 
+            size="sm"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2"
+          >
+            <MapPin className="w-5 h-5" />
+          </Button>
+        </div>
+
+        {/* Discount Banner */}
+        <Card className="bg-gradient-to-r from-blue-400 to-blue-500 text-white p-4 rounded-2xl mb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-2xl font-bold">15% OFF</div>
+              <div className="text-sm opacity-90">Medicine at Your Doorstep</div>
+              <Button variant="secondary" size="sm" className="mt-2 bg-white text-blue-500 hover:bg-gray-100">
+                Shop Now
+              </Button>
+            </div>
+            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+              <span className="text-2xl">👨‍⚕️</span>
+            </div>
           </div>
-          
-          <div className="flex space-x-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={onShowMap}
-              className="bg-white/10 border-white/20 text-white hover:bg-white/20"
-            >
-              📍 Mapa
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={onShowNotifications}
-              className="bg-white/10 border-white/20 text-white hover:bg-white/20"
-            >
-              🔔 Alertas
-            </Button>
+        </Card>
+      </div>
+
+      {/* Content */}
+      <div className="px-4 space-y-6">
+        {/* Categories */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-semibold text-gray-800">Categories</h2>
+            <Button variant="ghost" size="sm" className="text-blue-500">See All</Button>
           </div>
+          <div className="grid grid-cols-4 gap-3">
+            {categories.map((category, index) => (
+              <div key={index} className="text-center">
+                <div className={`w-12 h-12 ${category.color} rounded-xl flex items-center justify-center mx-auto mb-2`}>
+                  <span className="text-lg">{category.icon}</span>
+                </div>
+                <span className="text-xs text-gray-600">{category.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Search Results or Bestseller Products */}
+        <div>
+          {isSearching && (
+            <div className="text-center py-8">
+              <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p className="text-gray-600">Searching medicines...</p>
+            </div>
+          )}
+
+          {results.length > 0 && !isSearching ? (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-gray-800">Search Results</h2>
+                <span className="text-sm text-gray-600">{results.length} found</span>
+              </div>
+              
+              {results.map((result) => (
+                <Card key={result.id} className="p-4 bg-white rounded-2xl shadow-sm">
+                  <div className="flex space-x-3">
+                    <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center">
+                      <img src={result.image} alt={result.name} className="w-12 h-12 object-contain" />
+                    </div>
+                    
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <h3 className="font-semibold text-gray-800 text-sm">{result.name}</h3>
+                          <p className="text-xs text-gray-500">{result.genericName}</p>
+                        </div>
+                        {result.hasDiscount && (
+                          <Badge variant="secondary" className="bg-red-100 text-red-600 text-xs">
+                            Sale
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      <div className="flex items-center space-x-1 mb-2">
+                        <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                        <span className="text-xs text-gray-600">{result.rating}</span>
+                        <span className="text-xs text-gray-400">({result.availability} reviews)</span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg font-bold text-gray-800">${result.price}</span>
+                          {result.originalPrice && (
+                            <span className="text-sm text-gray-400 line-through">${result.originalPrice}</span>
+                          )}
+                        </div>
+                        
+                        <Button size="sm" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-full">
+                          Add
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          ) : !isSearching && !searchQuery ? (
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-semibold text-gray-800">Bestseller Products</h2>
+                <Button variant="ghost" size="sm" className="text-blue-500">See All</Button>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
+                {mockResults.slice(0, 2).map((product) => (
+                  <Card key={product.id} className="p-3 bg-white rounded-2xl shadow-sm">
+                    <div className="w-full h-20 bg-gray-100 rounded-xl flex items-center justify-center mb-3">
+                      <img src={product.image} alt={product.name} className="w-16 h-16 object-contain" />
+                    </div>
+                    
+                    <h3 className="font-medium text-gray-800 text-sm mb-1 line-clamp-2">{product.name}</h3>
+                    <p className="text-xs text-gray-500 mb-2">{product.genericName}</p>
+                    
+                    <div className="flex items-center space-x-1 mb-2">
+                      <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                      <span className="text-xs text-gray-600">{product.rating}</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-bold text-gray-800">${product.price}</span>
+                      <Button size="sm" variant="outline" className="w-8 h-8 p-0 rounded-full">
+                        <ShoppingCart className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-gray-400" />
+              </div>
+              <p className="text-gray-600">No medicines found</p>
+              <p className="text-sm text-gray-400 mt-2">Try searching with different keywords</p>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Search results */}
-      <div className="p-4 space-y-4">
-        {isSearching && (
-          <div className="text-center py-8">
-            <div className="animate-spin w-8 h-8 border-2 border-fyg-teal border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Buscando medicamentos...</p>
-          </div>
-        )}
-
-        {results.length > 0 && !isSearching && (
-          <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">
-              {results.length} resultados encontrados
-            </p>
-            
-            {results.map((result) => (
-              <Card key={result.id} className="p-4 hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-3">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground">{result.name}</h3>
-                    <p className="text-sm text-muted-foreground">{result.genericName}</p>
-                  </div>
-                  
-                  {result.hasDiscount && (
-                    <Badge variant="secondary" className="bg-fyg-teal/10 text-fyg-teal">
-                      Descuento
-                    </Badge>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 mb-3">
-                  <div>
-                    <p className="text-xs text-muted-foreground">Precio</p>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-lg font-bold text-fyg-green">
-                        ${result.price}
-                      </span>
-                      {result.originalPrice && (
-                        <span className="text-sm text-muted-foreground line-through">
-                          ${result.originalPrice}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <p className="text-xs text-muted-foreground">Disponible</p>
-                    <p className="text-lg font-semibold">{result.availability} unidades</p>
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-center text-sm">
-                  <div>
-                    <p className="font-medium text-foreground">{result.pharmacy}</p>
-                    <p className="text-muted-foreground">{result.distance}</p>
-                  </div>
-                  
-                  <div className="text-right">
-                    <p className="text-muted-foreground">Vence:</p>
-                    <p className="text-foreground">{result.expirationDate}</p>
-                  </div>
-                </div>
-
-                <Button className="w-full mt-3 bg-fyg-teal hover:bg-fyg-blue">
-                  Ver detalles
-                </Button>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {results.length === 0 && !isSearching && searchQuery && (
-          <div className="text-center py-8">
-            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">💊</span>
-            </div>
-            <p className="text-muted-foreground">No se encontraron resultados</p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Intenta con otro nombre de medicamento
-            </p>
-          </div>
-        )}
-
-        {results.length === 0 && !isSearching && !searchQuery && (
-          <div className="text-center py-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-fyg-teal to-fyg-blue rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse-slow">
-              <span className="text-2xl text-white">🔍</span>
-            </div>
-            <p className="text-foreground font-medium">¿Qué medicamento buscas?</p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Ingresa el nombre del medicamento para encontrar disponibilidad y precios
-            </p>
-          </div>
-        )}
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
+        <div className="flex items-center justify-around max-w-md mx-auto">
+          <Button variant="ghost" className="flex flex-col items-center p-2">
+            <div className="w-6 h-6 bg-blue-500 rounded mb-1"></div>
+            <span className="text-xs text-blue-500">Home</span>
+          </Button>
+          <Button variant="ghost" className="flex flex-col items-center p-2">
+            <ShoppingCart className="w-6 h-6 text-gray-400 mb-1" />
+            <span className="text-xs text-gray-400">Cart</span>
+          </Button>
+          <Button variant="ghost" className="flex flex-col items-center p-2">
+            <div className="w-6 h-6 bg-gray-300 rounded mb-1"></div>
+            <span className="text-xs text-gray-400">Wishlist</span>
+          </Button>
+          <Button variant="ghost" className="flex flex-col items-center p-2">
+            <div className="w-6 h-6 bg-gray-300 rounded mb-1"></div>
+            <span className="text-xs text-gray-400">Orders</span>
+          </Button>
+          <Button variant="ghost" className="flex flex-col items-center p-2">
+            <div className="w-6 h-6 bg-gray-300 rounded mb-1"></div>
+            <span className="text-xs text-gray-400">Profile</span>
+          </Button>
+        </div>
       </div>
     </div>
   );
